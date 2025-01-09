@@ -1,0 +1,64 @@
+# version: '3' doesnt work
+
+services:
+  nginx:
+    container_name: nginx
+    volumes:
+      - wordpress_data:/var/www/wordpress
+    networks:
+      - inception
+    depends_on:
+      - wordpress
+    build: requirements/nginx/.
+    env_file: .env
+    ports:
+      - "443:443"
+    expose:
+      - "443"
+    restart: on-failure
+  
+  mariadb:
+    container_name: mariadb
+    volumes:
+      - mariadb_data:/var/lib/mysql
+    networks:
+      - inception
+    build: requirements/mariadb/.
+    env_file: .env
+    expose:
+      - "3306"
+    restart: on-failure
+
+  wordpress:
+    container_name: wordpress
+    volumes:
+      - wordpress_data:/var/www/wordpress
+    networks:
+      - inception
+    depends_on:
+      - mariadb
+    build: requirements/wordpress/.
+    env_file: .env
+    expose:
+      - "9000"
+    restart: on-failure
+
+
+volumes:
+  mariadb_data:
+    driver: local
+    driver_opts:
+      type: none
+      device: /home/pajimene/data/mysql
+      o: bind
+
+  wordpress_data:
+    driver: local
+    driver_opts:
+      type: none
+      device: /home/pajimene/data/wordpress
+      o: bind
+
+networks:
+  inception:
+    driver: bridge
