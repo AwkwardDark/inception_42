@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inception Bonus!</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+            font-family: 'Orbitron', sans-serif;
+            cursor: none;
+        }
+        .band {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2em;
+            font-weight: bold;
+            transition: background 1s;
+            color: black;
+        }
+        .flame {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            background: url('https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExNGtwbWZsMHdxOGU4Nm5hMHU3dzRweXdicncxeWRwbzd3ZzZjbG4wZSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/pSS0GqISqT0BDeYWjm/giphy.gif') no-repeat center center;
+            background-size: cover;
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+            opacity: 0.8;
+        }
+        .trail {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            background: url('https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExNGtwbWZsMHdxOGU4Nm5hMHU3dzRweXdicncxeWRwbzd3ZzZjbG4wZSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/pSS0GqISqT0BDeYWjm/giphy.gif') no-repeat center center;
+            background-size: cover;
+            pointer-events: none;
+            opacity: 0.5;
+            transform: translate(-50%, -50%);
+            animation: trailAnimation 1s ease-out forwards;
+        }
+
+        @keyframes trailAnimation {
+            0% { opacity: 0.8; }
+            100% { opacity: 0; transform: translate(-50%, -50%) scale(0.5); }
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="band">Inception Bonus!</div>
+    <div class="band">Inception Bonus!</div>
+    <div class="band">Inception Bonus!</div>
+    <div class="band">Inception Bonus!</div>
+    <div class="band">Inception Bonus!</div>
+    <div class="flame" id="flame"></div>
+
+    <script>
+        const colors = ["red", "yellow", "blue", "green", "magenta"];
+        const bands = document.querySelectorAll(".band");
+
+        function getRandomColor(exclude) {
+            let color;
+            do
+                color = colors[Math.floor(Math.random() * colors.length)];
+            while (color === exclude);
+            return color;
+        }
+        
+        function changeColors() {
+            let lastColor = "";
+            bands.forEach((band) => {
+                let newColor = getRandomColor(lastColor);
+                band.style.backgroundColor = newColor;
+                lastColor = newColor;
+            });
+        }
+        
+        changeColors();
+        setInterval(changeColors, 2000);
+        
+        const flame = document.getElementById("flame");
+        let trailPositions = [];
+
+        document.addEventListener("mousemove", (e) => {
+            // Update flame position
+            flame.style.left = `${e.clientX}px`;
+            flame.style.top = `${e.clientY}px`;
+
+            // Store the trail position
+            trailPositions.push({ x: e.clientX, y: e.clientY });
+
+            // Create trail
+            if (trailPositions.length > 5) {
+                trailPositions.shift(); // Remove the oldest trail point
+            }
+
+            // Create trail elements
+            trailPositions.forEach((pos, index) => {
+                const trailElement = document.createElement("div");
+                trailElement.classList.add("trail");
+                trailElement.style.left = `${pos.x}px`;
+                trailElement.style.top = `${pos.y}px`;
+
+                // Append the trail to the body
+                document.body.appendChild(trailElement);
+
+                // Remove the trail after animation ends
+                setTimeout(() => {trailElement.remove();}, 1000); // Match animation duration
+            });
+        });
+    </script>
+</body>
+</html>
